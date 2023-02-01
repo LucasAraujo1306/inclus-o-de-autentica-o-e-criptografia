@@ -1,7 +1,17 @@
 const pool = require('../connections/pg')
+const jwt = require('jsonwebtoken');
+const senhaJWT = require('../senhaJWT');
 
 const listarCarros = async (req, res) => {
+    const { token } = req.body
+
     try {
+        const tokenUsuario = jwt.verify(token, senhaJWT);
+
+        if (!tokenUsuario) {
+            return res.status(401).json({ mensagem: "Não autorizaod" });
+        }
+
         const { rows } = await pool.query('select * from carros')
 
         return res.json(rows)
