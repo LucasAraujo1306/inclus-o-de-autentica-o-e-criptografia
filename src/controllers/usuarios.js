@@ -1,5 +1,7 @@
-const pool = require("../connections/pg")
+const pool = require("../connections/pg");
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const senhaJWT = require('../senhaJWT');
 
 const cadastrarUsuario = async (req, res) => {
     const { nome, email, senha } = req.body
@@ -27,9 +29,12 @@ const loginUsuario = async (req, res) => {
 
         if (!senhaValida) { return res.status(400).json({ mensagem: 'Email ou senha invalida' }) }
 
-        return res.json({ mensagem: 'usuario autenticado' });
-    } catch (error) {
+        const token = jwt.sign({ id: usuario.rows[0].id }, senhaJWT, { expiresIn: '1h' });
 
+        const { senha: _, ...usuarioLogado } = usuario.rows[0]
+
+        return res.json({ usuario: usuarioLogado, token });
+    } catch (error) {
         return res.status(500).json({ mensagem: "Erro interno do servido" })
     }
 }
