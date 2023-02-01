@@ -1,6 +1,7 @@
 const express = require('express');
 const { listarCarros, detalharCarro, cadastrarCarro, atualizarCarro, excluirCarro, } = require('../controllers/carros');
-const { cadastrarUsuario, loginUsuario } = require('../controllers/usuarios');
+const { cadastrarUsuario, loginUsuario, obterPerfil } = require('../controllers/usuarios');
+const verificarUsuarioLogado = require('../middlewares/autenticacao');
 
 
 const rotas = express();
@@ -8,11 +9,14 @@ const rotas = express();
 rotas.post('/usuario', cadastrarUsuario);
 rotas.post('/login', loginUsuario)
 
-rotas.get('/carro', listarCarros)
-rotas.get('/carro/:id', detalharCarro)
-rotas.post('/carro', cadastrarCarro)
-rotas.put('/carro/:id', atualizarCarro)
-rotas.delete('/carro/:id', excluirCarro)
+rotas.use(verificarUsuarioLogado)
+rotas.post('/perfil', obterPerfil);
+
+rotas.get('/carro', verificarUsuarioLogado, listarCarros)
+rotas.get('/carro/:id', verificarUsuarioLogado, detalharCarro)
+rotas.post('/carro', verificarUsuarioLogado, cadastrarCarro)
+rotas.put('/carro/:id', verificarUsuarioLogado, atualizarCarro)
+rotas.delete('/carro/:id', verificarUsuarioLogado, excluirCarro)
 
 
 
