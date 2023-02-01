@@ -1,12 +1,12 @@
 const express = require('express');
 const { listarCarros, detalharCarro, cadastrarCarro, atualizarCarro, excluirCarro, } = require('../controllers/carros');
-const { cadastrarUsuario } = require('../controllers/usuarios');
-
+const { cadastrarUsuario, loginUsuario } = require('../controllers/usuarios');
 
 
 const rotas = express();
 
 rotas.post('/usuario', cadastrarUsuario);
+rotas.post('/login', loginUsuario)
 
 rotas.get('/carro', listarCarros)
 rotas.get('/carro/:id', detalharCarro)
